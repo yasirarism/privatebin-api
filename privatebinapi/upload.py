@@ -136,7 +136,7 @@ def send(server: str, *, text: str = None, file: str = None, password: str = Non
 
 async def send_async(server: str, *, text: str = None, file: str = None, password: str = None, expiration: str = '1day',
                      compression: str = 'zlib', formatting: str = 'plaintext', burn_after_reading: bool = False,
-                     proxies: dict = None, discussion: bool = False, executor: Executor = None):
+                     proxy: dict = None, discussion: bool = False, executor: Executor = None):
     """Asynchronously upload a paste to a PrivateBin host.
 
     :param server: The home URL of the PrivateBin host.
@@ -147,7 +147,7 @@ async def send_async(server: str, *, text: str = None, file: str = None, passwor
     :param compression: What type of compression to use when uploading.
     :param formatting: What format the paste should be declared as.
     :param burn_after_reading: Whether or not the paste should delete itself immediately after being read.
-    :param proxies: A dict of proxies to pass to a requests.Session object.
+    :param proxy: A dict of proxies to pass to a requests.Session object.
     :param discussion: Whether or not to enable discussion on the paste.
     :param executor: A concurrent.futures.Executor instance used for decryption.
     :return: The link to the paste and the delete token.
@@ -157,6 +157,6 @@ async def send_async(server: str, *, text: str = None, file: str = None, passwor
         formatting=formatting, burn_after_reading=burn_after_reading, discussion=discussion
     )
     data, passcode = await get_loop().run_in_executor(executor, func)
-    async with httpx.AsyncClient(proxies=proxies, headers=DEFAULT_HEADERS) as client:
+    async with httpx.AsyncClient(proxy=proxy, headers=DEFAULT_HEADERS) as client:
         response = await client.post(server, data=data)
     return process_result(response, passcode)
