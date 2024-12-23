@@ -80,16 +80,16 @@ def get(url: str, *, proxies: dict = None, password: str = None) -> dict:
     return decrypt_paste(verify_response(response), extract_passphrase(url), password=password)
 
 
-async def get_async(url: str, *, proxies: dict = None, password: str = None, executor: Executor = None, ):
+async def get_async(url: str, *, proxy: dict = None, password: str = None, executor: Executor = None, ):
     """Asynchronously download a paste from a PrivateBin host.
 
     :param url: The full URL of a paste, including passphrase.
-    :param proxies: A dict of proxies to pass to an httpx.AsyncClient object.
+    :param proxy: A dict of proxies to pass to an httpx.AsyncClient object.
     :param password: Password for decrypting the paste.
     :param executor: A concurrent.futures.Executor instance used for decryption.
     :return: The decrypted text content of the paste.
     """
-    async with httpx.AsyncClient(proxies=proxies, headers=DEFAULT_HEADERS) as client:
+    async with httpx.AsyncClient(proxy=proxy, headers=DEFAULT_HEADERS) as client:
         response = await client.get(url)
     func = functools.partial(decrypt_paste, verify_response(response), extract_passphrase(url), password=password)
     result = await get_loop().run_in_executor(executor, func)
